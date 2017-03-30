@@ -1,0 +1,74 @@
+#!/usr/bin/env ruby
+
+require_relative "../lib/flashcards"
+
+@main_menu = <<-MENU
+Actions available:
+
+  * exit            -> quit flashcards
+  * open [filename] -> open a new deck
+
+MENU
+
+@main_menu_actions = {
+  'exit' => lambda { exit },
+  'open' => lambda { |filename| open(filename) }
+}
+
+@deck_menu = <<-MENU
+Actions available:
+
+  * menu            -> go back to main menu
+  * save [filename] -> write the deck to filename
+  * add             -> adds a new card to the deck through an
+                       interactive process
+  * flash           -> shows the top flash card on the deck
+  * all             -> interactively goes through cards in the deck
+  * shuffle         -> shuffles the deck
+
+MENU
+
+@deck_menu_actions = {
+  'add' => lambda { |deck| deck.add_card },
+  'save' => lambda { |deck, filename| deck.write(filename) },
+  'flash' => lambda { |deck| deck.flash },
+  'all' => lambda { |deck| deck.flash_all },
+  'shuffle' => lambda { |deck| deck.shuffle },
+}
+
+def menu(text)
+  puts text
+  print '> '
+  input = gets.chomp.split(" ")
+  return input.shift, input
+end
+
+def action_not_found(action)
+  puts "Don't know how to do '#{action}'"
+end
+
+def open(filename)
+  deck = Flashcards.read_deck(filename)
+
+  loop do
+    action, args = menu(@deck_menu)
+    args.unshift(deck)
+
+    if @deck_menu_actions[action]
+      @deck_menu_actions[action].call(*args)
+    elsif action == "menu"
+      break
+    else
+      action_not_found(action)
+    end
+  end
+end
+
+loop do
+  action, args = menu(@main_menu)
+  if @main_menu_actions[action]
+    @main_menu_actions[action].call(*args)
+  else
+    action_not_found(action)
+  end
+end

@@ -44,39 +44,11 @@ module Flashcards
     end
 
     def add_card
-      empty_lines = 0
-      front = []
       puts "FRONT (three empty lines to finish)"
-      loop do
-        line = gets
-        if line.chomp("\n").empty?
-          empty_lines += 1
-        else
-          empty_lines = 0
-        end
+      front = gets(LINE_BREAK).chomp(LINE_BREAK)
 
-        break if empty_lines >= 3
-
-        front << line
-      end
-      front = front.join.gsub(Regexp.new(LINE_BREAK), '').chomp("/n")
-
-      empty_lines = 0
-      back = []
       puts "BACK (three empty lines to finish)"
-      loop do
-        line = gets
-        if line.chomp("\n").empty?
-          empty_lines += 1
-        else
-          empty_lines = 0
-        end
-
-        break if empty_lines >= 3
-
-        back << line
-      end
-      back = back.join.gsub(Regexp.new(LINE_BREAK), '').chomp("/n")
+      back = gets(LINE_BREAK).chomp(LINE_BREAK)
 
       cards << Card.new(front: front, back: back)
     end
@@ -85,25 +57,30 @@ module Flashcards
       self.shuffle if shuffle
 
       loop do
-        flash
-        print "Press ENTER for next card. Type exit to quit."
+        flash(shuffle: shuffle, prompt_next: false)
+        puts "Press ENTER for next card. Type exit to quit."
+        print '> '
         input = gets.chomp
         break unless input.empty?
       end
     end
 
-    def flash(shuffle: true)
+    def flash(shuffle: true, prompt_next: true)
       card = next_card(shuffle: shuffle)
       puts "FRONT"
       puts
       print "\s\s"
       puts card.front.gsub(/\n/, "\n\s\s")
-      print "Press ENTER to flip."
+      puts "Press ENTER to flip."
       gets
       puts "BACK"
       puts
       print "\s\s"
       puts card.back.gsub(/\n/, "\n\s\s")
+      if prompt_next
+        puts "Press ENTER to continue."
+        gets
+      end
     end
 
     def shuffle

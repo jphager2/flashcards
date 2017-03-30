@@ -1,3 +1,5 @@
+Query by selector
+
 ```
 // jQuery
 $('selector');`
@@ -10,6 +12,7 @@ document.querySelectorAll('selector');
 ```
 
 
+Query by class
 ```
 // jQuery
 $('.class');
@@ -27,6 +30,7 @@ document.getElementsByClassName('class');
 ```
 
 
+Query by id
 ```
 // jQuery
 $('#id');
@@ -44,11 +48,66 @@ document.getElementById('id');
 ```
 
 
+Query by attribute
 // jQuery
 $('a[target=_blank]');
 
 
 // Native
 document.querySelectorAll('a[target=_blank]');
+
+
+Query in descendents
+
+// jQuery
+$el.find('li');
+
+
+// Native
+el.querySelectorAll('li');
+
+
+Sibling elements
+
+```
+// jQuery
+$el.siblings();
+```
+
+
+```
+// Native
+Array.prototype.filter.call(el.parentNode.children, (child) =>
+  child !== el
+);
+```
+
+
+Previous elements
+
+```// jQuery
+// jQuery
+$el.prev();
+```
+
+
+```
+// Native
+el.previousElementSibling;
+```
+
+
+Next elements
+
+```
+// jQuery
+$el.next();
+```
+
+
+```
+// Native
+el.nextElementSibling;
+```
 
 
