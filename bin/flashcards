@@ -1,21 +1,28 @@
 #!/usr/bin/env ruby
 
 require_relative "../lib/flashcards"
+require "tempfile"
 
-@main_menu = <<-MENU
+module Flashcards
+  class Interactive
+    MAIN_MENU = <<-MENU
 Actions available:
 
   * exit            -> quit flashcards
-  * open [filename] -> open a new deck
+  * open [filename] -> open a deck
+  * new             -> create a new deck
 
-MENU
+    MENU
 
-@main_menu_actions = {
-  'exit' => lambda { exit },
-  'open' => lambda { |filename| open(filename) }
-}
+    MAIN_MENU_ACTIONS = {
+      "exit" => lambda { |interactive| exit },
+      "open" => lambda { |interactive, filename|
+        interactive.open_deck(filename)
+      },
+      "new" => lambda { |interactive| interactive.new_deck },
+    }
 
-@deck_menu = <<-MENU
+    DECK_MENU = <<-MENU
 Actions available:
 
   * menu            -> go back to main menu
@@ -26,49 +33,124 @@ Actions available:
   * all             -> interactively goes through cards in the deck
   * shuffle         -> shuffles the deck
 
-MENU
+    MENU
 
-@deck_menu_actions = {
-  'add' => lambda { |deck| deck.add_card },
-  'save' => lambda { |deck, filename| deck.write(filename) },
-  'flash' => lambda { |deck| deck.flash },
-  'all' => lambda { |deck| deck.flash_all },
-  'shuffle' => lambda { |deck| deck.shuffle },
-}
+    DECK_MENU_ACTIONS = {
+      "add" => lambda { |interactive, deck| interactive.add_card(deck) },
+      "save" => lambda { |interactive, deck, filename = nil|
+        filename ||= deck.filename
 
-def menu(text)
-  puts text
-  print '> '
-  input = gets.chomp.split(" ")
-  return input.shift, input
-end
+        deck.write(filename)
+      },
+      "flash" => lambda { |interactive, deck| interactive.flash(deck) },
+      "all" => lambda { |interactive, deck| interactive.flash_all(deck) },
+      "shuffle" => lambda { |interactive, deck| deck.shuffle },
+    }
+    
+    def run
+      action, args = menu(MAIN_MENU)
+      args.unshift(self)
+      if MAIN_MENU_ACTIONS[action]
+        MAIN_MENU_ACTIONS[action].call(*args)
+      else
+        action_not_found(action)
+      end
 
-def action_not_found(action)
-  puts "Don't know how to do '#{action}'"
-end
+      run
+    end
 
-def open(filename)
-  deck = Flashcards.read_deck(filename)
+    def menu(text)
+      puts text
+      print "> "
+      input = gets.chomp.split(" ")
+      puts
+      return input.shift, input
+    end
 
-  loop do
-    action, args = menu(@deck_menu)
-    args.unshift(deck)
+    def action_not_found(action)
+      puts "Don't know how to do '#{action}'"
+    end
 
-    if @deck_menu_actions[action]
-      @deck_menu_actions[action].call(*args)
-    elsif action == "menu"
-      break
-    else
-      action_not_found(action)
+    def flash_all(deck)
+      deck.shuffle
+
+      loop do
+        flash(deck, prompt_next: false)
+        puts "Press ENTER for next card. Type exit to quit."
+        print "> "
+        input = gets.chomp
+        break unless input.empty?
+      end
+    end
+
+    def flash(deck, prompt_next: true)
+      card = deck.next_card(shuffle: true)
+      puts "FRONT"
+      puts
+      print "\s\s"
+      puts card.front.gsub(/\n/, "\n\s\s")
+      puts
+      puts "Press ENTER to flip."
+      gets
+      puts "BACK"
+      puts
+      print "\s\s"
+      puts card.back.gsub(/\n/, "\n\s\s")
+      puts
+      if prompt_next
+        puts "Press ENTER to continue."
+        gets
+      end
+    end
+
+    def add_card(deck)
+      puts "FRONT (two empty lines to finish)"
+
+      card_data = {}
+      %i{ front back }.each do |side|
+        file = Tempfile.new("#{side}.md")
+        file.write(side.upcase)
+        file.close
+        path = file.to_path
+
+        system("vim", path)
+
+        input = File.read(path).gsub(Regexp.new(Flashcards::LINE_BREAK), "\n").strip
+
+        card_data[side] = input
+      end
+      deck.add_card(card_data)
+    end
+
+    def deck_loop(deck)
+      loop do
+        puts "[Cards in deck (#{deck.cards.length})]"
+        puts
+        action, args = menu(DECK_MENU)
+        args.unshift(deck)
+        args.unshift(self)
+
+        if DECK_MENU_ACTIONS[action]
+          DECK_MENU_ACTIONS[action].call(*args)
+        elsif action == "menu"
+          break
+        else
+          action_not_found(action)
+        end
+        puts
+      end
+    end
+
+    def open_deck(filename)
+      deck = Flashcards.read_deck(filename)
+      deck_loop(deck)
+    end
+
+    def new_deck
+      deck = Flashcards.new_deck
+      deck_loop(deck)
     end
   end
 end
 
-loop do
-  action, args = menu(@main_menu)
-  if @main_menu_actions[action]
-    @main_menu_actions[action].call(*args)
-  else
-    action_not_found(action)
-  end
-end
+Flashcards::Interactive.new.run

@@ -1,0 +1,19 @@
+DDAU
+
+
+Data Down, Actions Up
+
+* The owner of the data should be the only one to change the data
+* Modifying data set in a router (in Ember) from a component violates "data down" because the lower component is changing data that is available in the higher route
+* This is important with the implementation of one way bindings (which are best practice). If you modify data in the component, those data modifications won't be seen in the higher route.
+* Thus to modify (and have access to those modifications) the data in the component, we need to send an *action up* to the route, which will modify the data it owns and then send the *data down*
+
+
+Keep in mind when deciding whether to load data in a component or a route.
+
+
+* If you are **changing the url*, use a route
+* If you can't decide which where you are going (transitioning to another route or deciding which components to render), use a route
+* Otherwise it is okay to load data in a component
+
+

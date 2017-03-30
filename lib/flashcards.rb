@@ -3,6 +3,10 @@ module Flashcards
 
   module_function
 
+  def new_deck
+    Deck.new([])
+  end
+
   def read_deck(filename)
     file = File.open(filename, 'r')
     cards = file.readlines(LINE_BREAK)
@@ -13,7 +17,7 @@ module Flashcards
             back: parts[1].chomp(LINE_BREAK)
           )
         }
-    Deck.new(cards)
+    Deck.new(cards: cards, filename: filename)
   end
 
   class Card
@@ -43,44 +47,8 @@ module Flashcards
       end
     end
 
-    def add_card
-      puts "FRONT (three empty lines to finish)"
-      front = gets(LINE_BREAK).chomp(LINE_BREAK)
-
-      puts "BACK (three empty lines to finish)"
-      back = gets(LINE_BREAK).chomp(LINE_BREAK)
-
+    def add_card(front:, back:)
       cards << Card.new(front: front, back: back)
-    end
-
-    def flash_all(shuffle: true)
-      self.shuffle if shuffle
-
-      loop do
-        flash(shuffle: shuffle, prompt_next: false)
-        puts "Press ENTER for next card. Type exit to quit."
-        print '> '
-        input = gets.chomp
-        break unless input.empty?
-      end
-    end
-
-    def flash(shuffle: true, prompt_next: true)
-      card = next_card(shuffle: shuffle)
-      puts "FRONT"
-      puts
-      print "\s\s"
-      puts card.front.gsub(/\n/, "\n\s\s")
-      puts "Press ENTER to flip."
-      gets
-      puts "BACK"
-      puts
-      print "\s\s"
-      puts card.back.gsub(/\n/, "\n\s\s")
-      if prompt_next
-        puts "Press ENTER to continue."
-        gets
-      end
     end
 
     def shuffle
@@ -93,8 +61,6 @@ module Flashcards
       @cards.sort!(&block)
     end
 
-    private
-
     def next_card(shuffle: false)
       card = enum.next
     rescue StopIteration
@@ -102,6 +68,8 @@ module Flashcards
       self.shuffle if shuffle
       next_card
     end
+
+    private
 
     def enum
       @enum ||= @cards.each
