@@ -1,0 +1,54 @@
+```
+// jQuery
+$('selector');`
+```
+
+
+```
+// Native
+document.querySelectorAll('selector');
+```
+
+
+```
+// jQuery
+$('.class');
+```
+
+
+```
+// Native
+document.querySelectorAll('.class');
+```
+
+```
+// or
+document.getElementsByClassName('class');
+```
+
+
+```
+// jQuery
+$('#id');
+```
+
+
+```
+// Native
+document.querySelector('#id');
+```
+
+```
+// or
+document.getElementById('id');
+```
+
+
+// jQuery
+$('a[target=_blank]');
+
+
+// Native
+document.querySelectorAll('a[target=_blank]');
+
+
