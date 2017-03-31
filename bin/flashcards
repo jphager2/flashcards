@@ -26,6 +26,7 @@ Actions available:
 Actions available:
 
   * menu            -> go back to main menu
+  * reopen          -> open the deck again (overwriting changes)
   * save [filename] -> write the deck to filename
   * add             -> adds a new card to the deck through an
                        interactive process
@@ -37,6 +38,9 @@ Actions available:
 
     DECK_MENU_ACTIONS = {
       "add" => lambda { |interactive, deck| interactive.add_card(deck) },
+      "reopen" => lambda { |interactive, deck|
+        MAIN_MENU_ACTIONS["open"].call(interactive, deck.filename)
+      },
       "save" => lambda { |interactive, deck, filename = nil|
         filename ||= deck.filename
 

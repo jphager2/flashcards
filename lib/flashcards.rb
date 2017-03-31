@@ -30,10 +30,11 @@ module Flashcards
   end
 
   class Deck
-    attr_reader :cards
+    attr_reader :cards, :filename
 
-    def initialize(cards)
+    def initialize(cards:, filename: nil)
       @cards = cards
+      @filename = filename
     end
 
     def write(filename)
@@ -62,7 +63,11 @@ module Flashcards
     end
 
     def next_card(shuffle: false)
-      card = enum.next
+      if cards.empty?
+        return Card.new(front: "NO CARDS YET", back: "NO CARDS YET")
+      end
+
+      enum.next
     rescue StopIteration
       clear_enum
       self.shuffle if shuffle

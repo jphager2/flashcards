@@ -1,0 +1,414 @@
+Query by selector
+
+```
+// jQuery
+$('selector');`
+```
+
+
+```
+// Native
+document.querySelectorAll('selector');
+```
+
+
+Query by class
+```
+// jQuery
+$('.class');
+```
+
+
+```
+// Native
+document.querySelectorAll('.class');
+```
+
+```
+// or
+document.getElementsByClassName('class');
+```
+
+
+Query by id
+```
+// jQuery
+$('#id');
+```
+
+
+```
+// Native
+document.querySelector('#id');
+```
+
+```
+// or
+document.getElementById('id');
+```
+
+
+Query by attribute
+
+```
+// jQuery
+$('a[target=_blank]');
+```
+
+
+```
+// Native
+document.querySelectorAll('a[target=_blank]');
+```
+
+
+Query in descendents
+
+```
+// jQuery
+$el.find('li');
+```
+
+
+```
+// Native
+el.querySelectorAll('li');
+```
+
+
+Sibling elements
+
+```
+// jQuery
+$el.siblings();
+```
+
+
+```
+// Native
+Array.prototype.filter.call(el.parentNode.children, (child) =>
+  child !== el
+);
+```
+
+
+Previous elements
+
+```
+// jQuery
+$el.prev();
+```
+
+
+```
+// Native
+el.previousElementSibling;
+```
+
+
+Next elements
+
+```
+// jQuery
+$el.next();
+```
+
+
+```
+// Native
+el.nextElementSibling;
+```
+
+
+Closest
+
+```
+// jQuery
+$el.closest(selector);
+```
+
+
+```
+// Native - Only latest, NO IE
+el.closest(selector);
+```
+
+
+Parents Until
+
+```
+// jQuery
+$el.parentsUntil(selector, filter);
+```
+
+
+```
+// Native
+function parentsUntil(el, selector, filter) {
+  const result = [];
+  const matchesSelector = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector;
+
+  // match start from parent
+  el = el.parentElement;
+  while (el && !matchesSelector.call(el, selector)) {
+    if (!filter) {
+      result.push(el);
+    } else {
+      if (matchesSelector.call(el, filter)) {
+        result.push(el);
+      }
+    }
+    el = el.parentElement;
+  }
+  return result;
+}
+```
+
+
+Input/Textarea
+
+```
+// jQuery
+$('#my-input').val();
+```
+
+
+```
+// Native
+document.querySelector('#my-input').value;
+```
+
+
+Get index of e.currentTarget between .radio
+
+```
+// jQuery
+$('.radio').index(e.currentTarget);
+```
+
+
+```
+// Native
+Array.prototype.indexOf.call(document.querySelectorAll('.radio'), e.currentTarget);
+```
+
+
+Iframe contents
+
+```
+// jQuery
+$iframe.contents();
+```
+
+`$('iframe').contents()` returns contentDocument for this specific iframe
+
+
+```
+// Native
+iframe.contentDocument;
+```
+
+
+Iframe Query
+
+```
+// jQuery
+$iframe.contents().find('.css');
+```
+
+
+```
+frame.contentDocument.querySelectorAll('.css');
+```
+
+
+Get body
+
+```
+// jQuery
+$('body');
+```
+
+
+```
+// Native
+document.body;
+```
+
+
+Get an attribute
+
+```
+// jQuery
+$el.attr('foo');
+```
+
+
+```
+// Native
+el.getAttribute('foo');
+```
+
+
+Set an attribute
+
+```
+// jQuery, note that this works in memory without change the DOM
+$el.attr('foo', 'bar');
+```
+
+
+```
+// Native
+el.setAttribute('foo', 'bar');
+```
+
+
+Get a data- attribute
+
+```
+// jQuery
+$el.data('foo');
+```
+
+
+```
+// Native (use `getAttribute`)
+el.getAttribute('data-foo');
+```
+
+```
+// Native (use `dataset` if only need to support IE 11+)
+el.dataset['foo'];
+```
+
+
+Get style
+
+```
+// jQuery
+$el.css('color');
+```
+
+
+```
+// Native
+// NOTE: Known bug, will return 'auto' if style value is 'auto'
+const win = el.ownerDocument.defaultView;
+
+// null means not to return pseudo styles
+win.getComputedStyle(el, null).color;
+```
+
+
+Set style
+
+```
+// jQuery
+$el.css({ color: '#f01' }); })
+```
+
+
+```
+// Native
+el.style.color = '#f01';
+```
+
+
+Add class
+
+```
+// jQuery
+$el.addClass(className);
+```
+
+
+```
+// Native
+el.classList.add(className);
+```
+
+
+Remove class
+
+```
+// jQuery
+$el.removeClass(className);
+```
+
+
+```
+// Native
+el.classList.remove(className);
+```
+
+
+has class
+
+```
+// jQuery
+$el.hasClass(className);
+```
+
+
+```
+// Native
+el.classList.contains(className);
+```
+
+
+Toggle class
+
+```
+// jQuery
+$el.toggleClass(className);
+```
+
+
+```
+// Native
+el.classList.toggle(className);
+```
+
+
+Window height (width identical)
+
+```
+// window height
+$(window).height();
+```
+
+
+```
+// with scrollbar
+window.document.documentElement.clientHeight;
+```
+
+```
+// without scrollbar, behaves like jQuery
+window.innerHeight;
+```
+
+
+Document height
+
+```
+// jQuery
+$(document).height();
+```
+
+
+```
+// Native
+const body = document.body;
+const html = document.documentElement;
+const height = Math.max(
+  body.offsetHeight,
+  body.scrollHeight,
+  html.clientHeight,
+  html.offsetHeight,
+  html.scrollHeight
+);
+```
+
+

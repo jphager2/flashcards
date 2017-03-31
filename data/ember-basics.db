@@ -17,3 +17,46 @@ Keep in mind when deciding whether to load data in a component or a route.
 * Otherwise it is okay to load data in a component
 
 
+Data Owner (in DDAU)
+
+
+That application component that takes responsibility for manipulating, loading or persisting a particular piece of data.
+
+
+Closure Actions
+
+
+Functions wrapped in a function.
+
+In ember the `action` helper creates a function with a closure that captures the scope and arguments. This function can now be passed around to other compents, which can then call the action in its original context.
+
+
+ember-route-action-helper (ember addon)
+
+
+Creates closure functions for route actions in the same way that the action helper creates closure functions for controller or component actions.
+
+
+The `mut` helper
+
+
+```
+{{input title onEnter=(action (mut title)) }}
+```
+
+Here the mut helper will set the title property of the component to the value of the input when the user presses enter.
+
+```
+{{date-picker
+  selected=(readonly date)
+  minDate=now
+  required=true
+  onSelect=(action (mut date) value="moment")
+}}
+```
+
+If the value of the component is an object, you can specify a property of that value that will be set for the component property.
+
+In the example above, the date-picker will set the component's date property to the `value.moment`.
+
+
