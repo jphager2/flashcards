@@ -8,7 +8,7 @@ module Flashcards
   end
 
   def read_deck(filename)
-    file = File.open(filename, 'r')
+    file = File.open(File.expand_path(filename), 'r')
     cards = file.readlines(LINE_BREAK)
         .each_slice(2)
         .map { |parts|

@@ -28,6 +28,7 @@ Actions available:
   * menu            -> go back to main menu
   * reopen          -> open the deck again (overwriting changes)
   * save [filename] -> write the deck to filename
+  * view            -> Overview of the cards (front) in the deck
   * add             -> adds a new card to the deck through an
                        interactive process
   * flash           -> shows the top flash card on the deck
@@ -46,6 +47,7 @@ Actions available:
 
         deck.write(filename)
       },
+      "view" => lambda { |interactive, deck| interactive.overview(deck) },
       "flash" => lambda { |interactive, deck| interactive.flash(deck) },
       "all" => lambda { |interactive, deck| interactive.flash_all(deck) },
       "shuffle" => lambda { |interactive, deck| deck.shuffle },
@@ -73,6 +75,21 @@ Actions available:
 
     def action_not_found(action)
       puts "Don't know how to do '#{action}'"
+    end
+
+    def overview(deck)
+      cards = deck.cards
+
+      out = cards.map.with_index do |card, i|
+        "---#{i + 1}.\n#{card.front}\n"
+      end.join('')
+
+      file = Tempfile.new('cards.md')
+      file.write(out)
+      file.close
+      filename = file.to_path
+
+      system("cat #{filename} | less")
     end
 
     def flash_all(deck)
@@ -148,6 +165,8 @@ Actions available:
     def open_deck(filename)
       deck = Flashcards.read_deck(filename)
       deck_loop(deck)
+    rescue Errno::ENOENT
+      puts "Cannot find a file at #{File.expand_path(filename)}"
     end
 
     def new_deck

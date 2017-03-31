@@ -412,3 +412,543 @@ const height = Math.max(
 ```
 
 
+Element height
+
+```
+// jQuery
+$el.height();
+```
+
+
+```
+// Native
+function getHeight(el) {
+  const styles = window.getComputedStyle(el);
+  const height = el.offsetHeight;
+  const borderTopWidth = parseFloat(styles.borderTopWidth);
+  const borderBottomWidth = parseFloat(styles.borderBottomWidth);
+  const paddingTop = parseFloat(styles.paddingTop);
+  const paddingBottom = parseFloat(styles.paddingBottom);
+  return height - borderBottomWidth - borderTopWidth - paddingTop - paddingBottom;
+}
+
+// accurate to integer（when `border-box`, it's `height - border`; when `content-box`, it's `height + padding`）
+el.clientHeight;
+
+// accurate to decimal（when `border-box`, it's `height`; when `content-box`, it's `height + padding + border`）
+el.getBoundingClientRect().height;
+```
+
+
+Position
+
+Get the current coordinates of the element relative to the offset parent.
+
+```
+// jQuery
+$el.position();
+```
+
+
+```
+// Native
+{ left: el.offsetLeft, top: el.offsetTop } }
+```
+
+
+Offset
+
+Get the current coordinates of the element relative to the document.
+
+```
+// jQuery
+$el.offset();
+```
+
+
+```
+// Native
+function getOffset (el) {
+  const box = el.getBoundingClientRect();
+
+  return {
+    top: box.top + window.pageYOffset - document.documentElement.clientTop,
+    left: box.left + window.pageXOffset - document.documentElement.clientLeft
+  };
+}
+```
+
+
+Scroll Top
+
+Get the current vertical position of the scroll bar for the element.
+
+```
+// jQuery
+$(window).scrollTop();
+```
+
+
+```
+// Native
+(document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
+```
+
+
+Remove the element from the DOM.
+
+```
+// jQuery
+$el.remove();
+```
+
+
+```
+// Native
+el.parentNode.removeChild(el);
+```
+
+
+Get the combined text contents of the element including their descendants,
+
+```
+// jQuery
+$el.text();
+```
+
+
+```
+// Native
+el.textContent;
+```
+
+
+Set the content of the element to the specified text.
+
+```
+// jQuery
+$el.text(string);
+```
+
+
+```
+// Native
+el.textContent = string;
+```
+
+
+Get HTML
+
+```
+// jQuery
+$el.html();
+```
+
+
+```
+// Native
+el.innerHTML;
+```
+
+
+Set HTML
+
+```
+// jQuery
+$el.html(htmlString);
+```
+
+
+```
+// Native
+el.innerHTML = htmlString;
+```
+
+
+Append child element after the last child of parent element
+
+```
+// jQuery
+$el.append('<div id="container">Hello World</div>');
+```
+
+
+```
+// Native (HTML string)
+el.insertAdjacentHTML('beforeend', '<div id="container">Hello World</div>');
+```
+
+```
+// Native (Element)
+el.appendChild(newEl);
+```
+
+
+Prepend
+
+```
+// jQuery
+$el.prepend('<div id="container">Hello World</div>');
+```
+
+
+```
+// Native (HTML string)
+el.insertAdjacentHTML('afterbegin', '<div id="container">Hello World</div>');
+```
+
+```
+// Native (Element)
+el.insertBefore(newEl, el.firstChild);
+```
+
+
+Insert a new node before the selected elements
+
+```
+// jQuery
+$newEl.insertBefore(selector);
+```
+
+
+```
+// Native (HTML string)
+el.insertAdjacentHTML('beforebegin ', '<div id="container">Hello World</div>');
+```
+
+```
+// Native (Element)
+const el = document.querySelector(selector);
+if (el.parentNode) {
+  el.parentNode.insertBefore(newEl, el);
+}
+```
+
+
+Insert a new node after the selected elements
+
+```
+// jQuery
+$newEl.insertAfter(selector);
+```
+
+
+```
+// Native (HTML string)
+el.insertAdjacentHTML('afterend', '<div id="container">Hello World</div>');
+```
+
+```
+// Native (Element)
+const el = document.querySelector(selector);
+if (el.parentNode) {
+  el.parentNode.insertBefore(newEl, el.nextSibling);
+}
+```
+
+
+Return true if it matches the query selector
+
+```
+// jQuery - Notice `is` also work with `function` or `elements` which is not concerned here
+$el.is(selector);
+```
+
+
+```
+// Native
+el.matches(selector);
+```
+
+
+Create a deep copy of that element
+
+```
+// jQuery
+$el.clone();
+```
+
+
+```
+// Native
+el.cloneNode();
+
+// For Deep clone , set param as `true`
+```
+
+
+Remove all child nodes
+
+```
+// jQuery
+$el.empty();
+```
+
+
+```
+// Native
+el.innerHTML = '';
+```
+
+
+Wrap an HTML structure around each element
+
+```
+// jQuery
+$('.inner').wrap('<div class="wrapper"></div>');
+```
+
+
+```
+// Native
+Array.prototype.forEach.call(document.querySelectorAll('.inner'), (el) => {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'wrapper';
+  el.parentNode.insertBefore(wrapper, el);
+  el.parentNode.removeChild(el);
+  wrapper.appendChild(el);
+});
+```
+
+
+Remove the parents of the set of matched elements from the DOM
+
+```
+// jQuery
+$('.inner').unwrap();
+```
+
+
+```
+// Native
+Array.prototype.forEach.call(document.querySelectorAll('.inner'), (el) => {
+  Array.prototype.forEach.call(el.childNodes, (child) => {
+    el.parentNode.insertBefore(child, el);
+  });
+  el.parentNode.removeChild(el);
+});
+```
+
+
+Replace each element in the set of matched elements with the provided new content
+
+```
+// jQuery
+$('.inner').replaceWith('<div class="outer"></div>');
+```
+
+
+```
+// Native
+Array.prototype.forEach.call(document.querySelectorAll('.inner'), (el) => {
+  const outer = document.createElement('div');
+  outer.className = 'outer';
+  el.parentNode.insertBefore(outer, el);
+  el.parentNode.removeChild(el);
+});
+```
+
+
+(Fetch API)[https://fetch.spec.whatwg.org/]
+
+
+Fetch API is the new standard to replace XMLHttpRequest to do ajax. It works on Chrome and Firefox, you can use polyfills to make it work on legacy browsers.
+
+Try (github/fetch)[http://github.com/github/fetch] on IE9+
+
+
+Document ready by DOMContentLoaded
+
+```
+// jQuery
+$(document).ready(eventHandler);
+```
+
+
+```
+// Native
+// Check if the DOMContentLoaded has already been completed
+if (document.readyState === 'complete' || document.readyState !== 'loading') {
+  eventHandler();
+} else {
+  document.addEventListener('DOMContentLoaded', eventHandler);
+}
+```
+
+
+Bind an event with on
+
+```
+// jQuery
+$el.on(eventName, eventHandler);
+```
+
+
+```
+// Native
+el.addEventListener(eventName, eventHandler);
+```
+
+
+Unbind an event with off
+
+```
+// jQuery
+$el.off(eventName, eventHandler);
+```
+
+
+```
+// Native
+el.removeEventListener(eventName, eventHandler);
+```
+
+
+Trigger
+
+```
+// jQuery
+$(el).trigger('custom-event', {key1: 'data'});
+```
+
+
+```
+// Native
+if (window.CustomEvent) {
+  const event = new CustomEvent('custom-event', {detail: {key1: 'data'}});
+} else {
+  const event = document.createEvent('CustomEvent');
+  event.initCustomEvent('custom-event', true, true, {key1: 'data'});
+}
+
+el.dispatchEvent(event);
+```
+
+
+Determine whether the argument is an array.
+
+```
+// jQuery
+$.isArray(array);
+```
+
+
+```
+// Native
+Array.isArray(array);
+```
+
+
+Determine whether the argument is a window.
+
+```
+// jQuery
+$.isWindow(obj);
+```
+
+
+```
+// Native
+function isWindow(obj) {
+  return obj !== null && obj !== undefined && obj === obj.window;
+}
+```
+
+
+Search for a specified value within an array and return its index (or -1 if not found).
+
+```
+// jQuery
+$.inArray(item, array);
+```
+
+
+```
+// Native
+array.indexOf(item) > -1;
+```
+
+```
+// ES6-way
+array.includes(item);
+```
+
+
+Determine if the argument passed is numerical. Use typeof to decide the type or the type example for better accuracy.
+
+```
+// jQuery
+$.isNumeric(item);
+```
+
+
+```
+// Native
+function isNumeric(value) {
+  var type = typeof value;
+  
+  return (type === 'number' || type === 'string') && !Number.isNaN(value - Number.parseFloat(value));
+}
+```
+
+
+Determine if the argument passed is a JavaScript function object.
+
+```
+// jQuery
+$.isFunction(item);
+```
+
+
+```
+// Native
+function isFunction(item) {
+  if (typeof item === 'function') {
+    return true;
+  }
+  var type = Object.prototype.toString(item);
+  return type === '[object Function]' || type === '[object GeneratorFunction]';
+}
+```
+
+
+Check to see if an object is empty (contains no enumerable properties).
+
+```
+// jQuery
+$.isEmptyObject(obj);
+```
+
+
+```
+// Native
+function isEmptyObject(obj) {
+  return Object.keys(obj).length === 0;
+}
+```
+
+
+Check to see if an object is a plain object (created using “{}” or “new Object”).
+
+```
+// jQuery
+$.isPlainObject(obj);
+```
+
+
+```
+// Native
+function isPlainObject(obj) {
+  if (typeof (obj) !== 'object' || obj.nodeType || obj !== null && obj !== undefined && obj === obj.window) {
+    return false;
+  }
+  
+  if (obj.constructor &&
+      !Object.prototype.hasOwnProperty.call(obj.constructor.prototype, 'isPrototypeOf')) {
+    return false;
+  }
+  return true;
+}
+```
+
+
