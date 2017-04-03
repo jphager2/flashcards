@@ -952,3 +952,332 @@ function isPlainObject(obj) {
 ```
 
 
+Merge the contents of two or more objects together into the first object. object.assign is ES6 API, and you could use polyfill also.
+
+```
+// jQuery
+$.extend({}, defaultOpts, opts);
+
+
+```
+// Native
+Object.assign({}, defaultOpts, opts);
+```
+
+
+Remove the white-space from the beginning and end of a string.
+
+```
+// jQuery
+$.trim(string);
+```
+
+
+```
+// Native
+string.trim();
+```
+
+
+Translate all items in an array or object to new array of items.
+
+```
+// jQuery
+$.map(array, (value, index) => {
+});
+```
+
+
+```
+// Native
+array.map((value, index) => {
+});))
+```
+
+
+A generic iterator function, which can be used to seamlessly iterate over both objects and arrays.
+
+```
+// jQuery
+$.each(array, (index, value) => {
+});
+```
+
+
+```
+// Native
+array.forEach((value, index) => {
+});))
+```
+
+
+Finds the elements of an array which satisfy a filter function.
+
+```
+// jQuery
+$.grep(array, (value, index) => {
+});
+```
+
+
+```
+// Native
+array.filter((value, index) => {
+});
+```
+
+
+Determine the internal JavaScript [Class] of an object.
+
+```
+// jQuery
+$.type(obj);
+```
+
+
+```
+// Native
+function type(item) {
+  const reTypeOf = /(?:^\[object\s(.*?)\]$)/;
+  return Object.prototype.toString.call(item)
+    .replace(reTypeOf, '$1')
+    .toLowerCase();
+}
+```
+
+
+Merge the contents of two arrays together into the first array.
+
+```
+// jQuery
+$.merge(array1, array2);
+```
+
+
+```
+// Native
+// But concat function doesn't remove duplicate items.
+function merge(...args) {
+  return [].concat(...args)
+}
+```
+
+
+Return a number representing the current time.
+
+```
+// jQuery
+$.now();
+```
+
+
+```
+// Native
+Date.now();
+```
+
+
+Takes a function and returns a new one that will always have a particular context.
+
+```
+// jQuery
+$.proxy(fn, context);
+```
+
+
+```
+// Native
+fn.bind(context);
+```
+
+
+Convert an array-like object into a true JavaScript array.
+
+```
+// jQuery
+$.makeArray(arrayLike);
+```
+
+
+```
+// Native
+Array.prototype.slice.call(arrayLike);
+```
+
+```
+// ES6-way
+Array.from(arrayLike);
+```
+
+
+Check to see if a DOM element is a descendant of another DOM element.
+
+```
+// jQuery
+$.contains(el, child);
+```
+
+
+```
+// Native
+el !== child && el.contains(child);
+```
+
+
+Execute some JavaScript code globally.
+
+```
+// jQuery
+$.globaleval(code);
+```
+
+
+```
+// Native
+function Globaleval(code) {
+  const script = document.createElement('script');
+  script.text = code;
+
+  document.head.appendChild(script).parentNode.removeChild(script);
+}
+```
+
+```
+// Use eval, but context of eval is current, context of $.Globaleval is global.
+eval(code);
+```
+
+
+Parses a string into an array of DOM nodes.
+
+```
+// jQuery
+$.parseHTML(htmlString);
+```
+
+
+```
+// Native
+function parseHTML(string) {
+  const context = document.implementation.createHTMLDocument();
+
+  // Set the base href for the created document so any parsed elements with URLs
+  // are based on the document's URL
+  const base = context.createElement('base');
+  base.href = document.location.href;
+  context.head.appendChild(base);
+
+  context.body.innerHTML = string;
+  return context.body.children;
+}
+```
+
+
+Takes a well-formed JSON string and returns the resulting JavaScript value.
+
+```
+// jQuery
+$.parseJSON(str);
+```
+
+
+```
+// Native
+JSON.parse(str);
+```
+
+
+done is called when promise is resolved, fail is called when promise is rejected, always is called when promise is either resolved or rejected.
+
+```
+// jQuery
+$promise.done(doneCallback).fail(failCallback).always(alwaysCallback)
+```
+
+
+```
+// Native
+promise.then(doneCallback, failCallback).then(alwaysCallback, alwaysCallback)
+```
+
+
+when is used to handle multiple promises. It will resolve when all promises are resolved, and reject if either one is rejected.
+
+```
+// jQuery
+$.when($promise1, $promise2).done((promise1Result, promise2Result) => {
+```
+});
+
+
+```
+// Native
+Promise.all([$promise1, $promise2]).then([promise1Result, promise2Result] => {});)
+```
+
+
+Deferred is a way to create promises.
+
+```
+// jQuery
+function asyncFunc() {
+  const defer = new $.Deferred();
+  setTimeout(() => {
+    if(true) {
+      defer.resolve('some_value_computed_asynchronously');
+    } else {
+      defer.reject('failed');
+    }
+  }, 1000);
+
+  return defer.promise();
+}
+```
+
+
+```
+// Native
+function asyncFunc() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (true) {
+        resolve('some_value_computed_asynchronously');
+      } else {
+        reject('failed');
+      }
+    }, 1000);
+  });
+}
+```
+
+```
+// Deferred way
+function defer() {
+  const deferred = {};
+  const promise = new Promise((resolve, reject) => {
+    deferred.resolve = resolve;
+    deferred.reject = reject;
+  });
+
+  deferred.promise = () => {
+    return promise;
+  };
+
+  return deferred;
+}
+
+function asyncFunc() {
+  const defer = defer();
+  setTimeout(() => {
+    if(true) {
+      defer.resolve('some_value_computed_asynchronously');
+    } else {
+      defer.reject('failed');
+    }
+  }, 1000);
+
+  return defer.promise();
+}
+```
+
+
