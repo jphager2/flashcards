@@ -1281,3 +1281,153 @@ function asyncFunc() {
 ```
 
 
+Show & Hide
+
+```
+// jQuery
+$el.show();
+$el.hide();
+```
+
+
+```
+// Native
+// More detail about show method, please refer to https://github.com/oneuijs/oui-dom-utils/blob/master/src/index.js#L363
+el.style.display = ''|'inline'|'inline-block'|'inline-table'|'block';
+el.style.display = 'none';
+```
+
+
+Display or hide the element.
+
+```
+// jQuery
+$el.toggle();
+```
+
+
+```
+// Native
+if (el.ownerDocument.defaultView.getComputedStyle(el, null).display === 'none') {
+  el.style.display = ''|'inline'|'inline-block'|'inline-table'|'block';
+} else {
+  el.style.display = 'none';
+}
+```
+
+
+FadeIn & FadeOut
+
+```
+// jQuery
+$el.fadeIn(3000);
+$el.fadeOut(3000);
+```
+
+
+```
+// Native
+el.style.transition = 'opacity 3s';
+// fadeIn
+el.style.opacity = '1';
+// fadeOut
+el.style.opacity = '0';
+```
+
+
+FadeTo
+
+Adjust the opacity of the element.
+
+```
+// jQuery
+$el.fadeTo('slow',0.15);
+```
+
+
+```
+// Native
+el.style.transition = 'opacity 3s'; // assume 'slow' equals 3 seconds
+el.style.opacity = '0.15';
+```
+
+
+Display or hide the element by animating their opacity.
+
+```
+// jQuery
+$el.fadeToggle();
+```
+
+
+```
+// Native
+el.style.transition = 'opacity 3s';
+const { opacity } = el.ownerDocument.defaultView.getComputedStyle(el, null);
+if (opacity === '1') {
+  el.style.opacity = '0';
+} else {
+  el.style.opacity = '1';
+}
+```
+
+
+SlideUp & SlideDown
+
+```
+// jQuery
+$el.slideUp();
+$el.slideDown();
+```
+
+
+```
+// Native
+const originHeight = '100px';
+el.style.transition = 'height 3s';
+// slideUp
+el.style.height = '0px';
+// slideDown
+el.style.height = originHeight;
+```
+
+
+Display or hide the element with a sliding motion.
+
+```
+// jQuery
+$el.slideToggle();
+```
+
+
+```
+// Native
+const originHeight = '100px';
+el.style.transition = 'height 3s';
+const { height } = el.ownerDocument.defaultView.getComputedStyle(el, null);
+if (parseInt(height, 10) === 0) {
+  el.style.height = originHeight;
+}
+else {
+ el.style.height = '0px';
+}
+```
+
+
+Perform a custom animation of a set of CSS properties.
+
+```
+// jQuery
+$el.animate({ params }, speed);
+```
+
+
+```
+// Native
+el.style.transition = 'all ' + speed;
+Object.keys(params).forEach((key) =>
+  el.style[key] = params[key];
+)
+```
+
+
